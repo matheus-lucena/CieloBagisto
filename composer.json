@@ -1,0 +1,23 @@
+{
+    "name": "matheuslucena/cielo-bagisto",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matheus Giovanni Lucena",
+            "email": "contato@matheuslucena.dev"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Lucena\\Cielo\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Lucena\\Cielo\\Providers\\CieloServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev"
+}
