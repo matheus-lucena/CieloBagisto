@@ -51,18 +51,9 @@ abstract class Cielo extends Payment
 
         // para descobrir endereço e o preço da entrega, precisa fazer uma query, buscando o endereço do carrinho com o address_type = shipping
         // depois buscar este id na tabela 	cart_shipping_rates
+        $cart_shipping_rates = $cart->selected_shipping_rate;
 
-        $cart_shipping_rates = DB::table('cart_shipping_rates')
-            ->join('cart','cart_shipping_rates.method','cart.shipping_method')
-            ->join('cart_address','cart_address.cart_id', '=', 'cart.id')
-            ->select('cart_shipping_rates.*','cart_shipping_rates.method_title','cart_address.postcode')
-            ->where('cart.id',$cart->id)
-            ->where('cart_address.address_type','shipping')
-            ->orderBy('cart_shipping_rates.id','desc')
-            ->first();
-
-            $cart_address = CartAddress::where('cart_id',$cart->id)
-            ->where('address_type','shipping')->first();
+            $cart_address = $cart->getBillingAddressAttribute();
 
             $shipping = array(
                 "TargetZipCode"=> $cart_shipping_rates->postcode,
@@ -115,7 +106,7 @@ abstract class Cielo extends Payment
             'Settings' => null
         );
 
-        
+        Log::info($this->Request($data,$this->getConfigData('merchant_key')));
         $url_cielo = $this->Request($data,$this->getConfigData('merchant_key'))['settings']['checkoutUrl'];
 
         //https://cieloecommerce.cielo.com.br/api/public/v1/orders
