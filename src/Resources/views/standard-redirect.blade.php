@@ -1,4 +1,4 @@
-<?php $cieloStardard = app('Extras\Cielo\Payment\Standard') ?>
+<?php $cieloStardard = app('Lucena\Cielo\Payment\Standard') ?>
 
 <body data-gr-c-s-loaded="true" cz-shortcut-listen="true">
     You will be redirected to the Cielo website in a few seconds.
