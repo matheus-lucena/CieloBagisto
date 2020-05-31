@@ -55,7 +55,7 @@ class Standard extends Cielo
             'paymentaction'   => 'sale',
             'return'          => route('cielo.standard.success'),
             'cancel_return'   => route('cielo.standard.cancel'),
-            'notify_url'      => route('cielo.standard.ipn'),
+            'notify_url'      => route('cielo.standard.notification'),
             'charset'         => 'utf-8',
             'item_name'       => core()->getCurrentChannel()->name,
             'amount'          => $cart->sub_total,

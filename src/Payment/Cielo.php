@@ -53,10 +53,9 @@ abstract class Cielo extends Payment
         // depois buscar este id na tabela 	cart_shipping_rates
         $cart_shipping_rates = $cart->selected_shipping_rate;
 
-            $cart_address = $cart->getBillingAddressAttribute();
-
+            $cart_shipping = $cart->getShippingAddressAttribute();
             $shipping = array(
-                "TargetZipCode"=> $cart_shipping_rates->postcode,
+                "TargetZipCode"=> $cart_shipping->postcode,
 
                 "Type" => "FixedAmount",
                 'Services' => array(
@@ -69,12 +68,12 @@ abstract class Cielo extends Payment
                     ),
                     // alterar o sistema para receber os dados de entrega. . 
                 'Address' => array(
-                    "Street" =>  $cart->billing_address->address1,
-                    "Number" => $cart_address->number,
-                    "Complement" => $cart_address->complement,
-                    "District" => $cart_address->district,
-                    "City" => $cart_address->city,
-                    "State" => $cart_address->state
+                    "Street" =>  $cart_shipping->address1,
+                    "Number" => $cart_shipping->number,
+                    "Complement" => $cart_shipping->complement,
+                    "District" => $cart_shipping->district,
+                    "City" => $cart_shipping->city,
+                    "State" => $cart_shipping->state
                 )
         );
       
@@ -84,11 +83,15 @@ abstract class Cielo extends Payment
             'FirstInstallmentDiscount' => 0
         );
 
+        $customerData = DB::table('customers')
+        ->where('email',$cart->customer_email)
+        ->first();
+
         $customer = array(
-            'Identity' => $cart->customer_identy,
-            'FullName' => $cart->customer_first_name . " " . $cart->customer_last_name,
-            'Email' => $cart->customer_email,
-            'Phone' => $cart->customer_phone
+            'Identity' => $customerData->document,
+            'FullName' => $customerData->first_name . " " . $customerData->last_name,
+            'Email' => $customerData->email,
+            'Phone' => $customerData->phone
         );
 
         $options = array(
@@ -106,7 +109,6 @@ abstract class Cielo extends Payment
             'Settings' => null
         );
 
-        Log::info($this->Request($data,$this->getConfigData('merchant_key')));
         $url_cielo = $this->Request($data,$this->getConfigData('merchant_key'))['settings']['checkoutUrl'];
 
         //https://cieloecommerce.cielo.com.br/api/public/v1/orders

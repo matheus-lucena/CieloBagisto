@@ -30,14 +30,16 @@ return [
                 'type' => 'select',
                 'options' => [
                     [
-                        'title' => 'Ativo',
+                        'title' => 'Active',
                         'value' => true
                     ], [
-                        'title' => 'Inativo',
+                        'title' => 'Inactive',
                         'value' => false
                     ]
                 ],
-                'validation' => 'required'
+                'validation' => 'required',
+                'channel_based' => false,
+                'locale_based' => true
             ],  [
                 'name' => 'sort',
                 'title' => 'admin::app.admin.system.sort_order',
