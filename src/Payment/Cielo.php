@@ -5,7 +5,6 @@ namespace Lucena\Cielo\Payment;
 use Illuminate\Support\Facades\Config;
 use Webkul\Payment\Payment\Payment;
 use DB;
-use Illuminate\Support\Facades\Log;
 use Webkul\Checkout\Models\CartAddress;
 /**
  * Paypal class
@@ -54,6 +53,8 @@ abstract class Cielo extends Payment
         $cart_shipping_rates = $cart->selected_shipping_rate;
 
             $cart_shipping = $cart->getShippingAddressAttribute();
+            $address = explode("\n", $cart_shipping->address1);
+            
             $shipping = array(
                 "TargetZipCode"=> $cart_shipping->postcode,
 
@@ -68,10 +69,10 @@ abstract class Cielo extends Payment
                     ),
                     // alterar o sistema para receber os dados de entrega. . 
                 'Address' => array(
-                    "Street" =>  $cart_shipping->address1,
-                    "Number" => $cart_shipping->number,
-                    "Complement" => $cart_shipping->complement,
-                    "District" => $cart_shipping->district,
+                    "Street" =>  $address[0],
+                    "Number" => $address[1],
+                    "Complement" => $address[3],
+                    "District" => $address[2],
                     "City" => $cart_shipping->city,
                     "State" => $cart_shipping->state
                 )
