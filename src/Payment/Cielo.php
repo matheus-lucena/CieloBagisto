@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Config;
 use Webkul\Payment\Payment\Payment;
 use DB;
 use Webkul\Checkout\Models\CartAddress;
+use Log;
 /**
  * Paypal class
  *
@@ -54,7 +55,8 @@ abstract class Cielo extends Payment
 
             $cart_shipping = $cart->getShippingAddressAttribute();
             $address = explode("\n", $cart_shipping->address1);
-            
+            Log::info($address);
+            Log::info(array_key_exists(1,$address) ? $address[1]:null);
             $shipping = array(
                 "TargetZipCode"=> $cart_shipping->postcode,
 
@@ -69,10 +71,10 @@ abstract class Cielo extends Payment
                     ),
                     // alterar o sistema para receber os dados de entrega. . 
                 'Address' => array(
-                    "Street" =>  $address[0],
-                    "Number" => $address[1],
-                    "Complement" => $address[3],
-                    "District" => $address[2],
+                    "Street" =>  array_key_exists(0,$address) ? $address[0] : null,
+                    "Number" => array_key_exists(1,$address) ? $address[1] : null,
+                    "Complement" => array_key_exists(3,$address) ? $address[3] : null,
+                    "District" => array_key_exists(2,$address) != null ? $address[2] : null,
                     "City" => $cart_shipping->city,
                     "State" => $cart_shipping->state
                 )
