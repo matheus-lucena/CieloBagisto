@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Config;
 use Webkul\Payment\Payment\Payment;
 use DB;
 use Webkul\Checkout\Models\CartAddress;
-use Log;
+
 /**
  * Paypal class
  *
@@ -55,8 +55,6 @@ abstract class Cielo extends Payment
 
             $cart_shipping = $cart->getShippingAddressAttribute();
             $address = explode("\n", $cart_shipping->address1);
-            Log::info($address);
-            Log::info(array_key_exists(1,$address) ? $address[1]:null);
             $shipping = array(
                 "TargetZipCode"=> $cart_shipping->postcode,
 
@@ -71,10 +69,10 @@ abstract class Cielo extends Payment
                     ),
                     // alterar o sistema para receber os dados de entrega. . 
                 'Address' => array(
-                    "Street" =>  array_key_exists(0,$address) ? $address[0] : null,
-                    "Number" => array_key_exists(1,$address) ? $address[1] : null,
-                    "Complement" => array_key_exists(3,$address) ? $address[3] : null,
-                    "District" => array_key_exists(2,$address) != null ? $address[2] : null,
+                    "Street" =>  $address[0],
+                    "Number" => $address[1],
+                    "Complement" => $address[3],
+                    "District" => $address[2],
                     "City" => $cart_shipping->city,
                     "State" => $cart_shipping->state
                 )
@@ -89,9 +87,7 @@ abstract class Cielo extends Payment
         $customerData = DB::table('customers')
         ->where('email',$cart->customer_email)
         ->first();
-
         $customer = array(
-            'Identity' => $customerData->document,
             'FullName' => $customerData->first_name . " " . $customerData->last_name,
             'Email' => $customerData->email,
             'Phone' => $customerData->phone
@@ -112,9 +108,10 @@ abstract class Cielo extends Payment
             'Settings' => null
         );
 
-        $url_cielo = $this->Request($data,$this->getConfigData('merchant_key'))['settings']['checkoutUrl'];
+        $request = $this->Request($data,$this->getConfigData('merchant_id'));
 
-        //https://cieloecommerce.cielo.com.br/api/public/v1/orders
+        $url_cielo = $request['settings']['checkoutUrl'];
+
         return $url_cielo;
     }
 
@@ -152,20 +149,9 @@ abstract class Cielo extends Payment
         $resposta = curl_exec($ch);
 
         $json = json_decode($resposta, true);
-
-            // Encerra CURL:
+        // Encerra CURL:
         curl_close($ch);
         return $json;
-    }
-    function gravar($texto){
-        //Variável arquivo armazena o nome e extensão do arquivo.
-        $arquivo = "meu_arquivo.txt";
-        //Variável $fp armazena a conexão com o arquivo e o tipo de ação.
-        $fp = fopen($arquivo, "a+");
-        //Escreve no arquivo aberto.
-        fwrite($fp, $texto . PHP_EOL);
-        //Fecha o arquivo.
-        fclose($fp);
     }
 
     /**

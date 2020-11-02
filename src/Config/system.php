@@ -19,8 +19,8 @@ return [
                 'channel_based' => false,
                 'locale_based' => true
             ],  [
-                'name' => 'merchant_key',
-                'title' => 'Merchant Key',
+                'name' => 'merchant_id',
+                'title' => 'Merchant ID',
                 'type' => 'select',
                 'type' => 'text',
                 'validation' => 'required'
